@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Govapplications | NexusGovt{% endblock %}
+{% block page_title %}Govapplications{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search govapplications...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="submitted" {% if status_filter == 'submitted' %}selected{% endif %}>Submitted</option>
+      <option value="under_review" {% if status_filter == 'under_review' %}selected{% endif %}>Under Review</option>
+      <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+      <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+      <option value="pending_info" {% if status_filter == 'pending_info' %}selected{% endif %}>Pending Info</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/govapplications/create/" class="btn btn-primary">+ New GovApplication</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Application Id</th><th>Citizen Name</th><th>Service Name</th><th>Status</th><th>Submitted Date</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/govapplications/{{ r.pk }}/edit/"><strong>{{ r.application_id }}</strong></a></td>
+        <td>{{ r.citizen_name|default:"-" }}</td>
+        <td>{{ r.service_name|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_status_display }}</span></td>
+        <td style="color:var(--muted)">{{ r.submitted_date|date:"M d, Y"|default:"-" }}</td>
+        <td class="actions">
+          <a href="/govapplications/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/govapplications/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No govapplications found.</p>
+    <a href="/govapplications/create/" class="btn btn-primary" style="margin-top:1rem">Create GovApplication</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

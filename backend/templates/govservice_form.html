@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} GovService | NexusGovt{% endblock %}
+{% block page_title %}{% if editing %}Edit GovService{% else %}New GovService{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ record.name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Department</label>
+        <input type="text" name="department" value="{{ record.department|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select name="category">
+          <option value="license" {% if record.category == 'license' %}selected{% endif %}>License</option>
+          <option value="permit" {% if record.category == 'permit' %}selected{% endif %}>Permit</option>
+          <option value="certificate" {% if record.category == 'certificate' %}selected{% endif %}>Certificate</option>
+          <option value="registration" {% if record.category == 'registration' %}selected{% endif %}>Registration</option>
+          <option value="tax" {% if record.category == 'tax' %}selected{% endif %}>Tax</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Fee</label>
+        <input type="number" step="0.01" name="fee" value="{{ record.fee|default:'0' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Processing Days</label>
+        <input type="number" name="processing_days" value="{{ record.processing_days|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="active" {% if record.status == 'active' %}selected{% endif %}>Active</option>
+          <option value="suspended" {% if record.status == 'suspended' %}selected{% endif %}>Suspended</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Documents Required</label>
+      <textarea name="documents_required">{{ record.documents_required|default:'' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description">{{ record.description|default:'' }}</textarea>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} GovService</button>
+      <a href="/govservices/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

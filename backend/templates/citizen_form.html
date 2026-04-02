@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} Citizen | NexusGovt{% endblock %}
+{% block page_title %}{% if editing %}Edit Citizen{% else %}New Citizen{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ record.name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Citizen Id</label>
+        <input type="text" name="citizen_id" value="{{ record.citizen_id|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" value="{{ record.email|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" name="phone" value="{{ record.phone|default:'' }}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <textarea name="address">{{ record.address|default:'' }}</textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Applications Count</label>
+        <input type="number" name="applications_count" value="{{ record.applications_count|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="verified" {% if record.status == 'verified' %}selected{% endif %}>Verified</option>
+          <option value="unverified" {% if record.status == 'unverified' %}selected{% endif %}>Unverified</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Registered Date</label>
+        <input type="date" name="registered_date" value="{{ record.registered_date|date:'Y-m-d'|default:'' }}">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} Citizen</button>
+      <a href="/citizens/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Citizens | NexusGovt{% endblock %}
+{% block page_title %}Citizens{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search citizens...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="verified" {% if status_filter == 'verified' %}selected{% endif %}>Verified</option>
+      <option value="unverified" {% if status_filter == 'unverified' %}selected{% endif %}>Unverified</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/citizens/create/" class="btn btn-primary">+ New Citizen</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Citizen Id</th><th>Email</th><th>Phone</th><th>Applications Count</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/citizens/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td>{{ r.citizen_id|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.email|default:"-" }}</td>
+        <td>{{ r.phone|default:"-" }}</td>
+        <td>{{ r.applications_count|default:"-" }}</td>
+        <td class="actions">
+          <a href="/citizens/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/citizens/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No citizens found.</p>
+    <a href="/citizens/create/" class="btn btn-primary" style="margin-top:1rem">Create Citizen</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

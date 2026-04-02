@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Govservices | NexusGovt{% endblock %}
+{% block page_title %}Govservices{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search govservices...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Category</option>
+      <option value="license" {% if status_filter == 'license' %}selected{% endif %}>License</option>
+      <option value="permit" {% if status_filter == 'permit' %}selected{% endif %}>Permit</option>
+      <option value="certificate" {% if status_filter == 'certificate' %}selected{% endif %}>Certificate</option>
+      <option value="registration" {% if status_filter == 'registration' %}selected{% endif %}>Registration</option>
+      <option value="tax" {% if status_filter == 'tax' %}selected{% endif %}>Tax</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/govservices/create/" class="btn btn-primary">+ New GovService</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Department</th><th>Category</th><th>Fee</th><th>Processing Days</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/govservices/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td>{{ r.department|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_category_display }}</span></td>
+        <td>{{ r.fee|floatformat:2 }}</td>
+        <td>{{ r.processing_days|default:"-" }}</td>
+        <td class="actions">
+          <a href="/govservices/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/govservices/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No govservices found.</p>
+    <a href="/govservices/create/" class="btn btn-primary" style="margin-top:1rem">Create GovService</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
